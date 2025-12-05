@@ -15,7 +15,7 @@ xi = np.linspace(ximin, ximax, Nsteps)
 
 phi = np.zeros(np.shape(xi))
 
-v = np.array([-nu0*(np.cosh(xi_)**2) for xi_ in xi])
+v = np.array([-nu0*(np.cosh(xi_)**-2) for xi_ in xi])
 
 f = v - ep
 
