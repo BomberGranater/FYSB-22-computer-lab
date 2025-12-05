@@ -6,24 +6,60 @@ ximax=8
 ximin=-ximax
 Nsteps=100*2*ximax
 nu0=6.0
-ep = -nu0/2
+ep = -4
 h = (ximax - ximin)/Nsteps
-q = np.sqrt(-ep)
+b = 2
 
 xi = np.linspace(ximin, ximax, Nsteps)
-
-phi = np.zeros(np.size(xi))
-
 nu = np.array([-nu0*(np.cosh(xi_)**(-2)) for xi_ in xi])
 
-f = nu - ep
+def gen_phi(ep_):
+    phi_ = np.zeros(np.shape(xi))
+    f = nu - ep_
+    q = np.sqrt(-ep_)
 
-phi[0] = 1
-phi[1] = np.exp(q*h)
+    phi_[0] = 1
+    phi_[1] = np.exp(q * h)
+
+    for i in range(1, np.size(xi) - 1):
+        phi_[i + 1] = (2 + f[i] * h ** 2) * phi_[i] - phi_[i - 1]
+
+    return phi_
 
 
-for i in range(1, np.size(xi) - 1):
-    phi[i + 1] = (2 + h**2 * f[i]) * phi[i] - phi[i - 1]
+#binary search, search for correct value between a too big and too small value.
+left = -4
+right = -3.999
+mid = left + (right - left)/2
 
-plt.plot(xi, phi)
+for i in range(1000):
+    mid = left + (right - left)/2
+    phi = gen_phi(mid)
+    last = phi[-1]
+    if abs(last) < 10**(-8):
+        print("broke at", i)
+        break
+
+    if last < 0:
+        right = mid
+
+    else:
+        left = mid
+
+phi1 = gen_phi(mid)
+phi2 = gen_phi(-1)  #not exactly correct value
+
+fig = plt.figure()
+plt.plot(xi, phi1)
+
+fig = plt.figure()
+plt.plot(xi, phi2)
+
 plt.show()
+
+
+
+
+
+
+
