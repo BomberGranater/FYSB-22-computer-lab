@@ -27,8 +27,3 @@ for i in range(1, np.size(xi) - 1):
 
 plt.plot(xi, phi)
 plt.show()
-
-
-
-
-
