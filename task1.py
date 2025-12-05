@@ -6,7 +6,8 @@ import matplotlib.pyplot as plt
 ximax = 8
 ximin = -ximax
 Nsteps = 100*2*ximax
-nu0 = 6.0
+b = 3
+nu0 = b*(b+1)
 h = (ximax - ximin)/Nsteps
 ep = -4.000
 
@@ -35,9 +36,9 @@ def gen_phi(ep_):
 
 def count_nodes(fun):
     # count number of sign changes for node nr
-    n = 0
+    n = 2
     plus = (fun[1] > 0)
-    for i in range(2, np.size(fun)):
+    for i in range(10, np.size(fun)-10):
         if plus and fun[i] < 0:
             plus = False
             n += 1
@@ -50,38 +51,63 @@ def count_nodes(fun):
     return n
 
 
-# quick and dirty binary search time
-left = ep-0.005
-right = ep+0.005
-mid = left + (right - left) / 2
-
-for i in range(1000):
-    mid = left + (right - left) / 2
-    phi = gen_phi(mid)
-    last = phi[-1]
-    if abs(last) < 10**-8:
-        print("broke at", i)
-        break
-
-    if last < 0:
-        right = mid
-
-    else:
-        left = mid
-
-
-phi = gen_phi(mid)
-
-nodes = count_nodes(phi)
-
-print(f"function has {nodes} nodes")
-plt.plot(xi, gen_phi(mid), label=f'ep={mid}')
-
 # actual bisection method
-ep
+#plt.plot(xi, gen_phi(-6))
+print(f"minimum energy function has {count_nodes(gen_phi(-6))} nodes")
+#plt.figure()
+print(f"maximum energy function has {count_nodes(gen_phi(-0.1))} nodes")
+#plt.plot(xi,  gen_phi(-0.1))
 
 
+def find_ep(goal):
+    ep_min = -nu0
+    ep_max = -0.1
+    phi_min = gen_phi(ep_min)
+    phi_max = gen_phi(ep_max)
 
+    nodes_min = count_nodes(phi_min)
+    nodes_max = count_nodes(phi_max)
+
+    if nodes_min > goal or nodes_max < goal:
+        return 404
+
+    # find right range for epsilon
+    for j in range(500):
+        if abs((ep_min - ep_max)/(ep_min + ep_max)) < 10**-8:
+            print("converged")
+            break
+
+        ep_mid = (ep_min + ep_max)/2.0
+        phi_mid = gen_phi(ep_mid)
+
+        if count_nodes(phi_mid) < goal:
+            ep_min = ep_mid
+            continue
+
+        if count_nodes(phi_mid) > goal:
+            ep_max = ep_mid
+            continue
+
+        test = phi_mid[-2]*phi_mid[-1] - np.exp(np.sqrt(-ep_mid)*h)*(phi_mid[-1]**2)
+
+        if test < 0:
+            ep_min = ep_mid
+            continue
+
+        if test > 0:
+            ep_max = ep_mid
+            continue
+
+    return ep_min, ep_max
+
+
+interval = find_ep(4)
+print("right range for one node is", interval)
+
+phi = gen_phi(interval[0])
+
+plt.figure()
+plt.plot(xi, phi, label='found function')
 
 plt.legend()
 plt.show()
