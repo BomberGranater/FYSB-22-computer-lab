@@ -36,7 +36,7 @@ def gen_phi(ep_):
 
 def count_nodes(fun):
     # count number of sign changes for node nr
-    n = 2
+    n = 0
     plus = (fun[1] > 0)
     for i in range(10, np.size(fun)-10):
         if plus and fun[i] < 0:
@@ -56,7 +56,7 @@ def count_nodes(fun):
 print(f"minimum energy function has {count_nodes(gen_phi(-6))} nodes")
 #plt.figure()
 print(f"maximum energy function has {count_nodes(gen_phi(-0.1))} nodes")
-#plt.plot(xi,  gen_phi(-0.1))
+#plt.plot(xi, gen_phi(-0.1))
 
 
 def find_ep(goal):
@@ -91,20 +91,26 @@ def find_ep(goal):
         test = phi_mid[-2]*phi_mid[-1] - np.exp(np.sqrt(-ep_mid)*h)*(phi_mid[-1]**2)
 
         if test < 0:
-            ep_min = ep_mid
-            continue
+            tail = phi_mid[-1]
+            if tail * (-1)**goal < 0:
+                ep_max = ep_mid
+                continue
+            else:
+                ep_max = ep_mid
+                continue
 
-        if test > 0:
-            ep_max = ep_mid
-            continue
+        if test > 0:  # Bad guess on interval
+            return 404
 
     return ep_min, ep_max
 
 
-interval = find_ep(4)
+interval = find_ep(0)
 print("right range for one node is", interval)
 
 phi = gen_phi(interval[0])
+
+print(f"solution has {count_nodes(phi)} nodes")
 
 plt.figure()
 plt.plot(xi, phi, label='found function')
