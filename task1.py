@@ -147,9 +147,11 @@ print("binary search value:", mid)
 
 
 plt.plot(xi, phi2)
+plt.plot(xi, nu)
 plt.title("Binary search")
 plt.figure()
 plt.plot(xi, phi)
+plt.plot(xi, nu)
 plt.title("Bisection method")
 plt.figure()
 plt.plot(eps, nodes)
