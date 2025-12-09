@@ -49,16 +49,26 @@ for i in range(1000):
 phi1 = gen_phi(mid)
 phi2 = gen_phi(-1)  #not exactly correct value
 
-fig = plt.figure()
+fig = plt.figure()  #plot for first excited state?
 plt.plot(xi, phi1)
 
-fig = plt.figure()
+fig = plt.figure()  #plot for ground state
 plt.plot(xi, phi2)
 
+ep_min = -nu0
+ep_max = -0.1
+
+phi_min = gen_phi(ep_min)
+phi_max = gen_phi(ep_max)
+
+fig = plt.figure()  #plot for
+plt.plot(xi, phi_min)
+
+fig = plt.figure()
+plt.plot(xi, phi_max)
+
+
 plt.show()
-
-
-
 
 
 
