@@ -126,7 +126,7 @@ plt.rcParams["mathtext.fontset"] = "cm"
 plt.scatter(x, vals)
 plt.title("Energy of bound states for double well potential")
 plt.ylabel(r"Bound state energy $\epsilon$")
-plt.xlabel(r"Well depth $s$")
+plt.xlabel(r"Distance between wells $s$")
 plt.figure()
 plt.plot(ep_l, node_l)
 

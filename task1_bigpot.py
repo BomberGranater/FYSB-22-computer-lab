@@ -144,6 +144,7 @@ phi2 = phi2/np.max(phi2)
 print("middle value bisect:", ep)
 print("binary search value:", mid)
 
+plt.rcParams["mathtext.fontset"] = "cm"
 
 plt.plot(xi, phi2)
 plt.plot(xi, nu)
@@ -154,8 +155,11 @@ plt.plot(xi, nu)
 plt.title("Bisection method")
 plt.figure()
 plt.plot(eps, nodes)
-plt.scatter(ep, count_nodes(phi), label="bisection")
-plt.scatter(mid, count_nodes(phi2), marker="x", label="binary search")
+plt.title(r"Number of nodes for different energies $\epsilon$ with $\nu_0 = 50$")
+plt.xlabel(r"energy $\epsilon$")
+plt.ylabel(r"number of nodes")
+#plt.scatter(ep, count_nodes(phi), label="bisection")
+#plt.scatter(mid, count_nodes(phi2), marker="x", label="binary search")
 
-plt.legend()
+#plt.legend()
 plt.show()
