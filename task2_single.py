@@ -2,22 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-# Parameters
-ximax = 8
-ximin = -ximax
-Nsteps = 100*2*ximax
-b = 3
-nu0 = 12
-h = (ximax - ximin)/Nsteps
-target = 2  # target number of nodes in search
-ep = -(b-target)**2
-
-
-xi = np.linspace(ximin, ximax, Nsteps)
-
-nu = np.array([-nu0 * (np.cosh(xi_) ** -2) for xi_ in xi])
-
-
 def gen_phi(ep_):
 
     phi_ = np.zeros(np.shape(xi))
@@ -52,13 +36,8 @@ def count_nodes(fun):
     return n
 
 
-# actual bisection method
-print(f"minimum energy function has {count_nodes(gen_phi(-nu0))} nodes")
-print(f"maximum energy function has {count_nodes(gen_phi(-0.1))} nodes")
-
-
 def find_ep(goal):
-    ep_min = -nu0
+    ep_min = -2 * nu0
     ep_max = -0.1
     phi_min = gen_phi(ep_min)
     phi_max = gen_phi(ep_max)
@@ -72,8 +51,8 @@ def find_ep(goal):
 
     # find right range for epsilon
     for j in range(500):
-        if abs(ep_min - ep_max) < 10**-16:
-            print("converged")
+        if abs(ep_min - ep_max) < 10**-9:  # Relaxed convergence check
+            # print("converged")
             break
 
         ep_mid = (ep_min + ep_max)/2.0
@@ -99,64 +78,38 @@ def find_ep(goal):
     return (ep_min + ep_max)/2
 
 
-# Binary search double check
-left = ep - 0.005
-right = ep + 0.005
-mid = ep
 
-for i in range(1000):
-    mid = (left + right) / 2
+S = np.linspace(0.1, 4, 10, endpoint=True)
 
-    phi = gen_phi(mid)
+# Parameters
+s = 0.1
 
-    last = phi[-1]
-
-    if last * (-1)**target < 0:
-        right = mid
-
-    if last * (-1)**target > 0:
-        left = mid
+ximax = int(s + 8)
+ximin = -ximax
+Nsteps = 100*2*ximax
+b = 2
+nu0 = b*(b+1)
+h = (ximax - ximin)/Nsteps
+target = 0  # target number of nodes in search
+ep = -(b-target)**2
 
 
-phi2 = gen_phi(mid)
 
+xi = np.linspace(ximin, ximax, Nsteps)
 
-Y = np.zeros(Nsteps)
+nu = np.array([(-nu0 * np.cosh(xi_+s)**-2) + (-nu0 * np.cosh(xi_-s)**-2) for xi_ in xi])
 
-nodes = np.zeros(Nsteps)
+nodes_max = count_nodes(gen_phi(-0.1))
 
-eps = np.linspace(-nu0, -0.1, Nsteps)
+ep = find_ep(0)
 
-for i in range(Nsteps):
-    phi = gen_phi(eps[i])
-    Y[i] = phi[-2]*phi[-1] - np.exp(np.sqrt(-eps[i])*h)*(phi[-1]**2)
-    nodes[i] = count_nodes(phi)
-
-
-ep = find_ep(target)
 phi = gen_phi(ep)
 
-
 # normalize
-phi = phi/np.max(phi)
-
-phi2 = phi2/np.max(phi2)
-
-print("middle value bisect:", ep)
-print("binary search value:", mid)
+phi = phi / np.max(np.abs(phi))
 
 
-plt.plot(xi, phi2)
-plt.plot(xi, nu)
-plt.title("Binary search")
-plt.figure()
 plt.plot(xi, phi)
 plt.plot(xi, nu)
-plt.title("Bisection method")
-plt.figure()
-plt.plot(eps, nodes)
-plt.scatter(ep, count_nodes(phi), label="bisection")
-plt.scatter(mid, count_nodes(phi2), marker="x", label="binary search")
 
-plt.legend()
 plt.show()

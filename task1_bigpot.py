@@ -7,7 +7,7 @@ ximax = 8
 ximin = -ximax
 Nsteps = 100*2*ximax
 b = 3
-nu0 = 12
+nu0 = 50
 h = (ximax - ximin)/Nsteps
 target = 2  # target number of nodes in search
 ep = -(b-target)**2
@@ -98,6 +98,21 @@ def find_ep(goal):
 
     return (ep_min + ep_max)/2
 
+Y = np.zeros(Nsteps)
+
+nodes = np.zeros(Nsteps)
+
+eps = np.linspace(-nu0, -0.1, Nsteps)
+
+for i in range(Nsteps):
+    phi = gen_phi(eps[i])
+    Y[i] = phi[-2]*phi[-1] - np.exp(np.sqrt(-eps[i])*h)*(phi[-1]**2)
+    nodes[i] = count_nodes(phi)
+
+
+ep = find_ep(target)
+phi = gen_phi(ep)
+
 
 # Binary search double check
 left = ep - 0.005
@@ -119,22 +134,6 @@ for i in range(1000):
 
 
 phi2 = gen_phi(mid)
-
-
-Y = np.zeros(Nsteps)
-
-nodes = np.zeros(Nsteps)
-
-eps = np.linspace(-nu0, -0.1, Nsteps)
-
-for i in range(Nsteps):
-    phi = gen_phi(eps[i])
-    Y[i] = phi[-2]*phi[-1] - np.exp(np.sqrt(-eps[i])*h)*(phi[-1]**2)
-    nodes[i] = count_nodes(phi)
-
-
-ep = find_ep(target)
-phi = gen_phi(ep)
 
 
 # normalize
