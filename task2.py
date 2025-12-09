@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 
 def gen_phi(ep_):
 
+
     phi_ = np.zeros(np.size(xi))
     f = nu - ep_
     q = np.sqrt(-ep_)
