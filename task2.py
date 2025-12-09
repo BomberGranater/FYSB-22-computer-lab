@@ -79,10 +79,13 @@ def find_ep(goal):
 
 
 
-S = np.linspace(0.1, 4, 10, endpoint=True)
+S = np.linspace(0.1, 4, 15, endpoint=True)
 
 x = []
 vals = []
+
+ep_l = np.array([])
+node_l = np.array([])
 
 for i in range(np.size(S)):
 
@@ -111,9 +114,20 @@ for i in range(np.size(S)):
         x.append(S[i])
         vals.append(ep)
 
+    if i == 0:
+        ep_l = np.linspace(-2*nu0, -0.1, Nsteps)
+        node_l = np.zeros(Nsteps)
+        for j in range(Nsteps):
+            node_l[j] = count_nodes(gen_phi(ep_l[j]))
 
+
+plt.rcParams["mathtext.fontset"] = "cm"
 
 plt.scatter(x, vals)
-
+plt.title("Energy of bound states for double well potential")
+plt.ylabel(r"Bound state energy $\epsilon$")
+plt.xlabel(r"Well depth $s$")
+plt.figure()
+plt.plot(ep_l, node_l)
 
 plt.show()
